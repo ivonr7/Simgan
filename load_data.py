@@ -7,6 +7,7 @@ class Data:
     #defines class variables
     __slots__=(
         "size",
+        "verbose",
         "base_images",
         "ground_truths",
         "subsets",
@@ -14,7 +15,8 @@ class Data:
     )
     
     
-    def __init__(self,quantity:np.int16=10000):
+    def __init__(self,quantity:int=10000,verbose:bool=False):
+        self.verbose=verbose
         self.size=quantity
         if "simgan" not in os.getcwd().lower():
             os.chdir(r"C:\Users\ONI\Desktop\Simgan\Simgan")
@@ -25,17 +27,21 @@ class Data:
     def load_images(self):
         image_folder=r"Original/"
         subsets=os.listdir(os.path.join(self.data_folder,image_folder))
-        sample_size=int(self.size/len(subsets))
+        sample_size=self.size//len(subsets) if self.size//len(subsets) else 1
         self.subsets=random.choices(subsets,
-            k=3
+            k=sample_size if sample_size<len(subsets) else len(subsets)-1
         )
+        if self.verbose:
+            print(f"choosing from subsets: {self.subsets[0:]}") 
         for p in self.subsets:
             folder=os.path.join(self.data_folder,image_folder,p)
             days=os.listdir(folder)
-            day_size=sample_size//len(days)
+            day_size=sample_size//len(days) if sample_size//len(days) else 1
             chosen_days=random.choices(days,
-                k=day_size if day_size<len(days)-1 else len(days)-2 
+                k=day_size if day_size<len(days)-1  else len(days)-2 
             )
+            if self.verbose:
+                print(f"choosing from days: {chosen_days[0:]}")
             for day in chosen_days:
                 path=os.path.join(
                         self.data_folder,
@@ -45,7 +51,8 @@ class Data:
                     )
 
                 images=[os.path.join(path,file) for file in os.listdir(path)]
-        images=random.choices(images,k=self.size)    
+        images=random.choices(images,k=self.size)
+        assert len(images) == self.size
 
 
 
@@ -54,4 +61,4 @@ class Data:
     
 
 if __name__ == "__main__":
-    dat=Data(1000)
+    dat=Data(100000)
