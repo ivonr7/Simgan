@@ -7,6 +7,8 @@ import click
 @click.option('--batch-size',default=100,help='How many images are passed into the discriminator')
 def train_models(batch_size):
     real_data=ld.Data(batch_size//2)
+    real_data.get_img()
+    real_data.show_img()
 
 
 

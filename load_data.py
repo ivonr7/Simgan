@@ -7,23 +7,37 @@ class Data:
     #defines class variables
     __slots__=(
         "size",
+        "current_index",
+        "img",
         "verbose",
         "base_images",
         "ground_truths",
         "subsets",
-        "data_folder"
+        "data_folder",
+        # "get_img",
+        # "show_img"
+
     )
     
     
     def __init__(self,quantity:int=10000,verbose:bool=False):
         self.verbose=verbose
         self.size=quantity
+        self.current_index=0
+
         if "simgan" not in os.getcwd().lower():
             os.chdir(r"C:\Users\ONI\Desktop\Simgan\Simgan")
         self.data_folder=r"archive/MPIIGaze/Data/"
         self.base_images=self.load_images()
     
-    
+    def get_img(self):
+        path=self.base_images[self.current_index]
+        self.img=plt.imread(path)
+        self.current_index+=1
+        return self.img
+    def show_img(self):
+        plt.imshow(self.img)
+        plt.show()
     def load_images(self):
         image_folder=r"Original/"
         subsets=os.listdir(os.path.join(self.data_folder,image_folder))
@@ -53,6 +67,7 @@ class Data:
                 images=[os.path.join(path,file) for file in os.listdir(path)]
         images=random.choices(images,k=self.size)
         assert len(images) == self.size
+        return images
 
 
 
@@ -62,3 +77,5 @@ class Data:
 
 if __name__ == "__main__":
     dat=Data(100000)
+    dat.get_img()
+    dat.show_img()
