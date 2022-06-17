@@ -29,15 +29,26 @@ class Data:
             os.chdir(r"C:\Users\ONI\Desktop\Simgan\Simgan")
         self.data_folder=r"archive/MPIIGaze/Data/"
         self.base_images=self.load_images()
-    
+    #getters
+    #----------------------
+
+    #behaves like a queue only loads next img
     def get_img(self):
         path=self.base_images[self.current_index]
+        if self.verbose:
+            print("getting img:",path)
         self.img=plt.imread(path)
         self.current_index+=1
         return self.img
+
+    #shows img --sanity check
     def show_img(self):
+        if self.verbose:
+            print("showing image")
         plt.imshow(self.img)
         plt.show()
+    
+    #loads img urls
     def load_images(self):
         image_folder=r"Original/"
         subsets=os.listdir(os.path.join(self.data_folder,image_folder))
